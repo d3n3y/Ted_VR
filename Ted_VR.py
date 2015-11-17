@@ -40,7 +40,8 @@ class Results:
     def __init__(self):
         self.greetings = ('hi','hello','Howdy')
         self.whoami = ('your','name')
-    
+        self.time =('time')
+        
     def Response(self, command):
 
         #Recieved a greeting
@@ -50,6 +51,9 @@ class Results:
         #Probably asking for my name    
         elif command in self.whoami:
             self.MyName(command)
+
+        elif command in self.time:
+            #dotristansfunction
 
             
         elif "ted" in command:
@@ -100,19 +104,19 @@ class Results:
 
 
     def say(self, text):
-        print '[!]', text
-        engine.say(text)
-        engine.runAndWait()
+       print ('[!]', text)
+       #engine.say(text)
+       #engine.runAndWait()
 
 
 
 #INIT
 
 #Set up his voice
-engine = pyttsx.init()
-engine.setProperty('rate', 120)
-ted = engine.getProperty('voices')[0]
-engine.setProperty('voice', ted.id)
+#engine = pyttsx
+#engine.setProperty('rate', 120)
+#ted = engine.engine.getProperty('voices')[0]
+#engine.engine.setProperty('voice', ted.id)
 
 #Listen for us passively
 Recog = sr.Recognizer()
@@ -128,7 +132,7 @@ with Mic as source:
     while True: 
         try:
             print ("[!] Listening")
-            audio = Recog.listen(source, 3)
+            audio = Recog.listen(source, 10)
         except:
             sr.WaitTimeoutError
             audio = None
