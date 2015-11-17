@@ -17,7 +17,7 @@ def Playback(Audio):
                     output=True)
 
     data = wf.frame_data
-    print "You Said:"
+    print ("You Said:")
     stream.write(data)
     stream.stop_stream()
     stream.close()
@@ -28,74 +28,87 @@ def Google_VR(audio):
     try:
         #this ensures all responses are lower case
         command = (Recog.recognize_google(audio, language = "en-AU")).lower()
-        print "ted thinks you said:", command
+        print ("ted thinks you said:", command)
         return command
     except:
         #print "Google has no idea what you said. Try again ?"
         sr.UnknownValueError
         command = None
         return command
+
+class Results:
+    def __init__(self):
+        self.greetings = ('hi','hello','Howdy')
+        self.whoami = ('your','name')
     
-def Results(command):
-    if 'hello' in command:
-        Hello(command)
-    if "name" and "your" in command:
-        MyName(command)
-    if "ted" in command:
-        #if time in command:
-            #Time srft time module
-        #if date in command:
-            #
-        if "lights" in command:
-            Lights(command)
-        if "thank you" in command:
-            Welcome(command)
-    else:
-        say('Unknown Command')
+    def Response(self, command):
 
-def Hello(command):
-    #time of day greetings
-    greetings = ('hi','hello','hola')
-    say(random.choice(greetings))
+        #Recieved a greeting
+        if command in self.greetings:
+            self.Hello(command)
 
-def Welcome(command):    
-    print "You are welcome!"
+        #Probably asking for my name    
+        elif command in self.whoami:
+            self.MyName(command)
 
-def MyName(command):
-    if "your" in command:
-        say('My name is ted, cunt')
-        say('Who the fuck are you?')
-        say('haha, just kidding you cunt')
+            
+        elif "ted" in command:
+            #if time in command:
+                #Time srft time module
+            #if date in command:
+                #
+            if "lights" in command:
+                Lights(command)
+            if "thank you" in command:
+                Welcome(command)
+        else:
+            self.say('Unknown Command')
 
-##def Name(command):
-##    if "my" and "is" in command:
-##        chop = command.index("is") + 3
-##        name = command[chop:]
-##        print "Hi", name, ", How are you?"
-##    if "what's my" in command:
-##        try:
-##            name
-##            print "You said your name is", name
-##        except:
-##            print "You didn't say your name :("
+    def Hello(self, command):
+        #time of day greetings
+        self.say(random.choice(self.greetings))
 
-def Lights(command):
-    if 'down' in command:
-        say("Turning down the lights for you")
-    if 'up' in command:
-        say("Turning the lights up")
+    def Welcome(self, command):    
+        print ("You are welcome!")
+
+    def MyName(self, command):
+        if "your" in command:
+            say('My name is ted')
+
+    ##def Name(command):
+    ##    if "my" and "is" in command:
+    ##        chop = command.index("is") + 3
+    ##        name = command[chop:]
+    ##        print "Hi", name, ", How are you?"
+    ##    if "what's my" in command:
+    ##        try:
+    ##            name
+    ##            print "You said your name is", name
+    ##        except:
+    ##            print "You didn't say your name :("
+
+    def Lights(self, command):
+        if 'down' in command:
+            say("Turning down the lights")
+        if 'off' in command:
+            say("Turning off the lights")
+            
+        if 'up' in command:
+            say("Turning the lights up")
+        if 'on' in command:
+            say("Turning on the lights")
 
 
-def say(text):
-    print text
-    engine.say(text)
-    engine.runAndWait()
+    def say(self, text):
+        print '[!]', text
+        engine.say(text)
+        engine.runAndWait()
 
 
 
 #INIT
 
-#Set up her voice
+#Set up his voice
 engine = pyttsx.init()
 engine.setProperty('rate', 120)
 ted = engine.getProperty('voices')[0]
@@ -104,27 +117,27 @@ engine.setProperty('voice', ted.id)
 #Listen for us passively
 Recog = sr.Recognizer()
 Mic = sr.Microphone()
-Recog.energy_threshold = 6000
+Recog.energy_threshold = 5000
 command = None
+
+#Setup our Results Class
+results = Results()
 
 #Inteperet voice if we find it
 with Mic as source:
     while True: 
         try:
-            print "listening"
-            audio = Recog.listen(source, 10)
+            print ("[!] Listening")
+            audio = Recog.listen(source, 3)
         except:
             sr.WaitTimeoutError
             audio = None
         if audio != None:
-            print "busy. Not listening"
-            print "heard something"
+            print ("[!] Heard something. ")
             command = Google_VR(audio)
             if type(command) == unicode:
-                Results(command)
-                if "good night ted" in command:
+                if command not in ('stop','goodnight'):
+                    results.Response(command)    
+                else:
+                    say('Goodbye')
                     break
-               
-        
-        
-print "Goodnight", name
